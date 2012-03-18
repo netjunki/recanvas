@@ -5,6 +5,9 @@
 ;(function(global, $) {
 	
 	$(document).ready(function() {
+                optDown = false;
+		optKeyCode = 18;
+		processing = false;
 		
 		// Configure CodeMirror
 		var editor = CodeMirror.fromTextArea(document.getElementById("code"), {
@@ -55,7 +58,64 @@
 					console.log("Got an error!", e)
 				}	
 				setLocalStorageValue("editorText", text);
-			}
+			},
+			onCursorActivity: function(cm) {
+			  console.log(optDown);
+			  if (optDown && !processing) {
+			    processing = true;
+			    var cursor = cm.coordsChar(cm.cursorCoords());
+                console.log(cursor);
+			    var token = cm.getTokenAt(cursor);
+			    var start = {line:cursor.line,ch:token.start};
+			    var stop = {line:cursor.line, ch:token.end};
+			    //check for negative
+			    m = {line:cursor.line,ch:token.start - 1};
+			    cm.setSelection(m,start);
+			    if (cm.getSelection() == "-") {
+			      start = m;
+			    }
+			    cm.setSelection(start, stop);
+                            processing = false;
+                   number = Number(cm.getSelection());
+	if (!isNaN(number)) {
+	  console.log("let's try and do something here...");
+	  var newdiv = document.createElement('div');
+	  id = "testdiv";
+	  newdiv.setAttribute('id', id);	
+	  newdiv.style.width = 300;
+	  newdiv.style.height = 10;
+	  newdiv.style.position = "absolute";
+	  newdiv.innerHTML = "<div id='slider'></div>";
+	    jQuery( "#slider" ).slider({
+	        max: number + 200,
+		min: number - 200,
+		value: number,
+	        slide: function(event, ui) {
+            cm.replaceSelection("" + ui.value);
+		},
+		stop: function(event, ui) {
+		  jQuery('#testdiv').remove();
+		}
+	      }
+	    );
+	  cm.addWidget(start,newdiv, true);	  
+	} else {
+	  console.log("whatever's selected isn't something we can deal with yet");
+	}
+			  }
+			},
+			onKeyEvent: function(cm,event) {
+			  if (event.keyCode == optKeyCode) { 
+			    switch(event.type) {
+			      case "keydown":
+			        optDown = true;
+			      break;
+			      case "keyup":
+			        optDown = false;
+			      break;
+			    }
+			  }
+		        }
 		});
 		
 		// Try and set the initial text
