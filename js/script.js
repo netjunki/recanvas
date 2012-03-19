@@ -80,7 +80,7 @@
                    number = Number(cm.getSelection());
 	if (!isNaN(number)) {
 	  console.log("let's try and do something here...");
-	  var newdiv = document.createElement('div');
+	  newdiv = document.createElement('div');
 	  id = "testdiv";
 	  newdiv.innerHTML="<div style='width: 300px' id='slider'></div>";
 	  newdiv.setAttribute('id', id);	
@@ -94,9 +94,11 @@
 	        slide: function(event, ui) {
            cm.replaceSelection("" + ui.value);
 		},
-		stop: function(event, ui) {		  
+		stop: function(event, ui) {
+		  $('#slider').empty();
+		  $('#testdiv').empty();
 		  jQuery('#slider').remove();
-		  jQuery('#testdiv').remove();
+		  jQuery('#testdiv').remove();		  
 		}
 	      }
 	    );
