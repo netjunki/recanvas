@@ -75,30 +75,33 @@
 			      start = m;
 			    }
 			    cm.setSelection(start, stop);
+			    console.log(cm.getSelection());
                             processing = false;
                    number = Number(cm.getSelection());
 	if (!isNaN(number)) {
 	  console.log("let's try and do something here...");
 	  var newdiv = document.createElement('div');
 	  id = "testdiv";
+	  newdiv.innerHTML="<div style='width: 300px' id='slider'></div>";
 	  newdiv.setAttribute('id', id);	
 	  newdiv.style.width = 300;
 	  newdiv.style.height = 10;
-	  newdiv.style.position = "absolute";
-	  newdiv.innerHTML = "<div id='slider'></div>";
+	  newdiv.style.background = "#cc0000";
 	    jQuery( "#slider" ).slider({
 	        max: number + 200,
 		min: number - 200,
 		value: number,
 	        slide: function(event, ui) {
-            cm.replaceSelection("" + ui.value);
+           cm.replaceSelection("" + ui.value);
 		},
-		stop: function(event, ui) {
+		stop: function(event, ui) {		  
+		  jQuery('#slider').remove();
 		  jQuery('#testdiv').remove();
 		}
 	      }
 	    );
-	  cm.addWidget(start,newdiv, true);	  
+//	  console.log(cm.localCoords(cm.clipPos(start)));
+	  cm.addWidget(start,newdiv, false, "near", "middle");	  
 	} else {
 	  console.log("whatever's selected isn't something we can deal with yet");
 	}
